@@ -1,12 +1,48 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-.idea
-*.db
+# Entornos virtuales
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Virtual environments
+# Bases de datos SQLite
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de distribución y compilación de paquetes
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Archivos de registro y bases de datos locales
+*.log
+*.sqlite-shm
+*.sqlite-wal
+*.pot
+*.tox
+.env
 .venv
+
+# Configuración del IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
