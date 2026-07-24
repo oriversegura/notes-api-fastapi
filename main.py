@@ -12,16 +12,16 @@ from notes.notes_router import router as notes_router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
     yield
 
-app = FastAPI(title="Notes API", version="0.0.1", lifespan=lifespan)
+app : FastAPI = FastAPI(title="Notes API", version="0.0.1", lifespan=lifespan)
 
 @app.get("/")
-def read_root():
+def read_root() -> dict[str, str]:
     return {"This api": "Stil Alive"}
 
 app.include_router(auth_router)
