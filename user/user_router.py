@@ -9,13 +9,11 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("/", response_model=list[UserResponse])
-async def get_users(db: AsyncSession = Depends(get_db)):
+async def get_users(db: AsyncSession = Depends(get_db)) -> list[UserResponse]:
     return await user_repository.get_all(db)
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get_user(user_id: int,
-                   db: AsyncSession = Depends(get_db)
-                   ):
+async def get_user(user_id: int, db: AsyncSession = Depends(get_db)) -> UserResponse:
     user = await user_repository.get_by_id(db, user_id)
 
     if user is None:
@@ -25,16 +23,11 @@ async def get_user(user_id: int,
 
 
 @router.post("/", response_model=UserResponse)
-async def create_user( user: UserCreate,
-                       db: AsyncSession = Depends(get_db)
-                       ):
+async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)) -> UserResponse:
     return await user_repository.create_user(db, user)
 
 @router.put("/{user_id}", response_model=UserResponse)
-async def update_user(user_id: int,
-                      user: UserCreate,
-                      db: AsyncSession = Depends(get_db)
-                      ):
+async def update_user(user_id: int, user: UserCreate, db: AsyncSession = Depends(get_db)) -> UserResponse:
     updated_user = await user_repository.update_user(db, user_id, user)
 
     if updated_user is None:
@@ -44,10 +37,7 @@ async def update_user(user_id: int,
 
 
 @router.delete("/{user_id}")
-async def delete_user(
-    user_id: int,
-    db: AsyncSession = Depends(get_db)
-):
+async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)) -> dict[str, str]:
     deleted_user = await user_repository.delete_user(db, user_id)
 
     if deleted_user is None:

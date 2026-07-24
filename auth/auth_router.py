@@ -8,7 +8,7 @@ from user import user_repository
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login", response_model=TokenResponse)
-async def login(login_request: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(login_request: LoginRequest, db: AsyncSession = Depends(get_db)) -> TokenResponse:
 
     user = await user_repository.get_by_email(db, login_request.email)
 

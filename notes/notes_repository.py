@@ -7,17 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 # Get all notes
-async def get_all(db: AsyncSession):
+async def get_all(db: AsyncSession) -> Sequence[Note]:
     result = await db.execute(select(Note))
     return result.scalars().all()
 
 # Get notes by id
-async def get_by_id(db: AsyncSession, note_id: int):
+async def get_by_id(db: AsyncSession, note_id: int) -> Optional[Note]:
     result = await db.execute(select(Note).where(Note.id == note_id))
     return result.scalars().first()
 
 # Create notes
-async def create_note(db: AsyncSession, note: NoteCreate):
+async def create_note(db: AsyncSession, note: NoteCreate) -> Note:
     new_note = Note(title=note.title, content=note.content)
     db.add(new_note)
     await db.commit()
@@ -25,7 +25,7 @@ async def create_note(db: AsyncSession, note: NoteCreate):
     return new_note
 
 # Update Notes
-async def update_note(db: AsyncSession, note_id: int, note: NoteCreate):
+async def update_note(db: AsyncSession, note_id: int, note: NoteCreate) -> Optional[Note]:
     result = await db.execute(select(Note).where(Note.id == note_id))
 
     note_to_update = (result.scalars().first())
@@ -41,7 +41,7 @@ async def update_note(db: AsyncSession, note_id: int, note: NoteCreate):
     return note_to_update
 
 # Delete Notes
-async def delete_note(db: AsyncSession, note_id: int):
+async def delete_note(db: AsyncSession, note_id: int) -> Optional[Note]:
     result = await db.execute(select(Note).where(Note.id == note_id))
     note_to_delete = (result.scalars().first())
     if note_to_delete is None:

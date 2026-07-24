@@ -12,7 +12,7 @@ from notes.notes_router import router as notes_router
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -28,7 +28,7 @@ app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(notes_router)
 
-def main():
+def main() -> None:
     port = int(os.environ.get('PORT', 8000))
     print('Server running on http://127.0.0.1:{}'.format(port))
     uvicorn.run(app, host='127.0.0.1', port=port)

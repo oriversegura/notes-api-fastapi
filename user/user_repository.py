@@ -1,20 +1,20 @@
 from user.user_model import User, UserCreate, UserResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from typing import Sequence, Optional
 
 # Get all Users
-async def get_all(db: AsyncSession):
+async def get_all(db: AsyncSession) -> Sequence[User]:
     result = await db.execute(select(User))
     return result.scalars().all()
 
 # Get Users by id
-async def get_by_id(db: AsyncSession, user_id: int):
+async def get_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalars().first()
 
 # Get User by Email
-async def get_by_email(db: AsyncSession, email: str):
+async def get_by_email(db: AsyncSession, email: str) -> Optional[User]:
     result = await db.execute(
         select(User).where(User.email == email)
     )
@@ -22,7 +22,7 @@ async def get_by_email(db: AsyncSession, email: str):
     return result.scalars().first()
 
 # Create Users
-async def create_user(db: AsyncSession, user: UserCreate):
+async def create_user(db: AsyncSession, user: UserCreate) -> User:
     new_user = User(name=user.name, surname=user.surname, email=user.email, hashed_password=user.password)
     db.add(new_user)
     await db.commit()
@@ -30,7 +30,7 @@ async def create_user(db: AsyncSession, user: UserCreate):
     return new_user
 
 # Update Users
-async def update_user(db: AsyncSession, user_id: int, user: UserCreate):
+async def update_user(db: AsyncSession, user_id: int, user: UserCreate) -> Optional[User]:
     result = await db.execute(select(User).where(User.id == user_id))
 
     user_to_update = (result.scalars().first())
@@ -48,7 +48,7 @@ async def update_user(db: AsyncSession, user_id: int, user: UserCreate):
     return user_to_update
 
 # Delete Users
-async def delete_user(db: AsyncSession, user_id: int):
+async def delete_user(db: AsyncSession, user_id: int) -> Optional[User]:
     result = await db.execute(select(User).where(User.id == user_id))
     user_to_delete = result.scalars().first()
     if user_to_delete is None:
