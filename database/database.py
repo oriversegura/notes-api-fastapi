@@ -1,8 +1,7 @@
-from sqlalchemy.ext.asyncio import (
-async_session,
-async_sessionmaker,
-create_async_engine
-)
+"""Database configuration and session dependency."""
+
+from collections.abc import AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
 # Ruta de la base de datos
@@ -27,7 +26,8 @@ class Base(DeclarativeBase):
 
 
 # Dependency para FastAPI
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession]:
+    """Genera una sesión async de la base de datos para dependencias de FastAPI."""
     async with AsyncSessionLocal() as session:
         yield session
 

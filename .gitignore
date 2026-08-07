@@ -8,7 +8,7 @@ venv.bak/
 # Bases de datos SQLite
 *.db
 *.sqlite
-*.sqlite3
+*.sqlite3ide
 *.db-journal
 
 # Archivos compilados de Python

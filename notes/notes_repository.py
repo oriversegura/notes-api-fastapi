@@ -1,23 +1,26 @@
-from http.client import HTTPException
-from unittest import result
+from collections.abc import Sequence
 
-from notes.notes_model import Note, NoteCreate, NoteResponse
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+import sqlalchemy
+import sqlalchemy.ext.asyncio
+
+from notes.notes_model import Note, NoteCreate
 
 
 # Get all notes
-async def get_all(db: AsyncSession) -> Sequence[Note]:
-    result = await db.execute(select(Note))
+async def get_all(db: sqlalchemy.ext.asyncio.AsyncSession) -> Sequence[Note]:
+    """Return all notes from the database."""
+    result = await db.execute(sqlalchemy.select(Note))
     return result.scalars().all()
 
 # Get notes by id
-async def get_by_id(db: AsyncSession, note_id: int) -> Optional[Note]:
-    result = await db.execute(select(Note).where(Note.id == note_id))
+async def get_by_id(db: sqlalchemy.ext.asyncio.AsyncSession, note_id: int) -> Note | None:
+    """Get a note by its ID from the database."""
+    result = await db.execute(sqlalchemy.select(Note).where(Note.id == note_id))
     return result.scalars().first()
 
 # Create notes
-async def create_note(db: AsyncSession, note: NoteCreate) -> Note:
+async def create_note(db: sqlalchemy.ext.asyncio.AsyncSession, note: NoteCreate) -> Note:
+    """Create and return a new note in the database."""
     new_note = Note(title=note.title, content=note.content)
     db.add(new_note)
     await db.commit()
@@ -25,8 +28,9 @@ async def create_note(db: AsyncSession, note: NoteCreate) -> Note:
     return new_note
 
 # Update Notes
-async def update_note(db: AsyncSession, note_id: int, note: NoteCreate) -> Optional[Note]:
-    result = await db.execute(select(Note).where(Note.id == note_id))
+async def update_note(db: sqlalchemy.ext.asyncio.AsyncSession, note_id: int, note: NoteCreate) -> Note | None:
+    """Update an existing note by its ID and return the updated note."""
+    result = await db.execute(sqlalchemy.select(Note).where(Note.id == note_id))
 
     note_to_update = (result.scalars().first())
 
@@ -41,8 +45,9 @@ async def update_note(db: AsyncSession, note_id: int, note: NoteCreate) -> Optio
     return note_to_update
 
 # Delete Notes
-async def delete_note(db: AsyncSession, note_id: int) -> Optional[Note]:
-    result = await db.execute(select(Note).where(Note.id == note_id))
+async def delete_note(db: sqlalchemy.ext.asyncio.AsyncSession, note_id: int) -> Note | None:
+    """Delete a note by its ID and return the deleted note."""
+    result = await db.execute(sqlalchemy.select(Note).where(Note.id == note_id))
     note_to_delete = (result.scalars().first())
     if note_to_delete is None:
         return None

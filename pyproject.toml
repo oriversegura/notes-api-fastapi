@@ -14,3 +14,41 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "sqlalchemy>=2.0.51",
 ]
+
+[tool.ruff]
+# Tamaño máximo de línea
+line-length = 100
+
+# Empatado con tu versión de Python (3.13)
+target-version = "py313"
+
+# Carpetas que Ruff debe ignorar completamente
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "env",
+    "__pycache__",
+    "migrations"
+]
+
+[tool.ruff.lint]
+# Activa los superpoderes de Ruff
+select = [
+    "E",   # pycodestyle (errores de estilo básicos)
+    "F",   # pyflakes (errores de código, variables no usadas, etc)
+    "W",   # pycodestyle warnings (advertencias)
+    "I",   # isort (organiza tus importaciones alfabéticamente)
+    "B",   # flake8-bugbear (detecta posibles bugs y malas prácticas)
+    "UP",  # pyupgrade (moderniza tu código a la versión de Python 3.13)
+    "SIM", # flake8-simplify (te sugiere cómo escribir el mismo código de forma más limpia)
+    "C4",  # flake8-comprehensions (mejora tus listas y diccionarios)
+]
+
+ignore = []
+
+[tool.ruff.format]
+# Usa comillas dobles para todo (estilo estándar de Black)
+quote-style = "double"
+# Usa espacios en lugar de tabulaciones
+indent-style = "space"
