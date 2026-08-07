@@ -1,55 +1,72 @@
-from user.user_model import User, UserCreate, UserResponse
+from collections.abc import Sequence
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Sequence, Optional
 
-# Get all Users
-async def get_all(db: AsyncSession) -> Sequence[User]:
-    result = await db.execute(select(User))
+from user import user_model
+
+
+async def get_all(db: AsyncSession) -> Sequence[user_model.User]:
+    """Return all users."""
+    result = await db.execute(select(user_model.User))
     return result.scalars().all()
 
-# Get Users by id
-async def get_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
-    result = await db.execute(select(User).where(User.id == user_id))
-    return result.scalars().first()
-
-# Get User by Email
-async def get_by_email(db: AsyncSession, email: str) -> Optional[User]:
+async def get_by_id(db: AsyncSession, user_id: int) -> user_model.User | None:
+    """Return a user by id."""
     result = await db.execute(
-        select(User).where(User.email == email)
+        select(user_model.User).where(user_model.User.id == user_id)
     )
-
     return result.scalars().first()
 
-# Create Users
-async def create_user(db: AsyncSession, user: UserCreate) -> User:
-    new_user = User(name=user.name, surname=user.surname, email=user.email, hashed_password=user.password)
+async def get_by_email(db: AsyncSession, email: str) -> user_model.User | None:
+    """Return a user by email."""
+    result = await db.execute(
+        select(user_model.User).where(user_model.User.email == email)
+    )
+    return result.scalars().first()
+
+async def create_user(db: AsyncSession, user_in: user_model.UserCreate) -> user_model.User:
+    """Create a new user."""
+    new_user = user_model.User(
+        name=user_in.name,
+        surname=user_in.surname,
+        email=user_in.email,
+        hashed_password=user_in.password,
+    )
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
     return new_user
 
-# Update Users
-async def update_user(db: AsyncSession, user_id: int, user: UserCreate) -> Optional[User]:
-    result = await db.execute(select(User).where(User.id == user_id))
+async def update_user(
+    db: AsyncSession,
+    user_id: int,
+    user_in: user_model.UserCreate,
+) -> user_model.User | None:
+    """Update an existing user."""
+    result = await db.execute(
+        select(user_model.User).where(user_model.User.id == user_id)
+    )
 
-    user_to_update = (result.scalars().first())
+    user_to_update = result.scalars().first()
 
     if user_to_update is None:
         return None
 
-    user_to_update.name = user.name
-    user_to_update.surname = user.surname
-    user_to_update.email = user.email
-    user_to_update.hashed_password = user.password
+    user_to_update.name = user_in.name
+    user_to_update.surname = user_in.surname
+    user_to_update.email = user_in.email
+    user_to_update.hashed_password = user_in.password
 
     await db.commit()
     await db.refresh(user_to_update)
     return user_to_update
 
-# Delete Users
-async def delete_user(db: AsyncSession, user_id: int) -> Optional[User]:
-    result = await db.execute(select(User).where(User.id == user_id))
+async def delete_user(db: AsyncSession, user_id: int) -> user_model.User | None:
+    """Delete a user by id."""
+    result = await db.execute(
+        select(user_model.User).where(user_model.User.id == user_id)
+    )
     user_to_delete = result.scalars().first()
     if user_to_delete is None:
         return None
